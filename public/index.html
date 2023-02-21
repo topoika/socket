@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chat App</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="main-div">
+      <ul id="messages" class="msg"></ul>
+      <form id="chat-form" class="form">
+        <input
+          type="text"
+          id="user"
+          autocomplete="on"
+          required
+          placeholder="Shaft John Shaft"
+        />
+        <input
+          type="text"
+          id="message-input"
+          autocomplete="off"
+          required
+          placeholder="Write a message to the boys"
+        />
+        <button type="submit">Send</button>
+      </form>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+      const form = document.getElementById("chat-form");
+      const input = document.getElementById("message-input");
+      const user = document.getElementById("user");
+      const messages = document.getElementById("messages");
+      form.addEventListener("submit", function (event) {
+        let data = {
+          msg: input.value,
+          user: user.value,
+        };
+        event.preventDefault();
+        const message = input.value;
+        socket.emit("chat message", data);
+        input.value = "";
+      });
+      socket.on("chat message", function (data) {
+        const li = document.createElement("li");
+        li.innerText = `${data.user}: ${data.msg}`;
+        messages.appendChild(li);
+        if (input.user !== null) {
+          user.remove();
+        }
+        console.log("message: " + data.msg);
+        console.log("User: " + data.user);
+      });
+    </script>
+  </body>
+</html>
